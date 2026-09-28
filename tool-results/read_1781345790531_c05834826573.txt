@@ -1,0 +1,1044 @@
+     1→'use client'
+     2→
+     3→import { useState, useEffect, useRef } from 'react'
+     4→import { motion, useInView, AnimatePresence } from 'framer-motion'
+     5→import {
+     6→  Building2, Cog, HardHat, Wrench, Phone, Mail, MapPin,
+     7→  ChevronDown, ArrowLeft, Menu, X, CheckCircle2, Users,
+     8→  Target, Zap, Shield, ArrowUpRight, Send, Star,
+     9→  Ruler, Compass, DraftingCompass, Factory, Calculator, BarChart3,
+    10→  Satellite, ScanLine, GraduationCap, Monitor, Radio, Gauge
+    11→} from 'lucide-react'
+    12→
+    13→/* ───────── animated counter ───────── */
+    14→function Counter({ end, suffix = '', duration = 2 }: { end: number; suffix?: string; duration?: number }) {
+    15→  const [count, setCount] = useState(0)
+    16→  const ref = useRef<HTMLSpanElement>(null)
+    17→  const inView = useInView(ref, { once: true })
+    18→  useEffect(() => {
+    19→    if (!inView) return
+    20→    let start = 0
+    21→    const step = end / (duration * 60)
+    22→    const timer = setInterval(() => {
+    23→      start += step
+    24→      if (start >= end) { setCount(end); clearInterval(timer) }
+    25→      else setCount(Math.floor(start))
+    26→    }, 1000 / 60)
+    27→    return () => clearInterval(timer)
+    28→  }, [inView, end, duration])
+    29→  return <span ref={ref}>{count}{suffix}</span>
+    30→}
+    31→
+    32→/* ───────── section wrapper ───────── */
+    33→function Section({ id, children, className = '' }: { id: string; children: React.ReactNode; className?: string }) {
+    34→  const ref = useRef<HTMLElement>(null)
+    35→  const inView = useInView(ref, { once: true, margin: '-80px' })
+    36→  return (
+    37→    <motion.section
+    38→      id={id}
+    39→      ref={ref}
+    40→      initial={{ opacity: 0, y: 50 }}
+    41→      animate={inView ? { opacity: 1, y: 0 } : {}}
+    42→      transition={{ duration: 0.7, ease: 'easeOut' }}
+    43→      className={className}
+    44→    >
+    45→      {children}
+    46→    </motion.section>
+    47→  )
+    48→}
+    49→
+    50→/* ───────── nav ───────── */
+    51→function Navbar() {
+    52→  const [scrolled, setScrolled] = useState(false)
+    53→  const [mobileOpen, setMobileOpen] = useState(false)
+    54→  useEffect(() => {
+    55→    const h = () => setScrolled(window.scrollY > 50)
+    56→    window.addEventListener('scroll', h)
+    57→    return () => window.removeEventListener('scroll', h)
+    58→  }, [])
+    59→
+    60→  const links = [
+    61→    { href: '#hero', label: 'الرئيسية' },
+    62→    { href: '#about', label: 'من نحن' },
+    63→    { href: '#services', label: 'خدماتنا' },
+    64→    { href: '#projects', label: 'مشاريعنا' },
+    65→    { href: '#contact', label: 'تواصل معنا' },
+    66→  ]
+    67→
+    68→  return (
+    69→    <motion.nav
+    70→      initial={{ y: -100 }}
+    71→      animate={{ y: 0 }}
+    72→      transition={{ duration: 0.6 }}
+    73→      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+    74→        scrolled
+    75→          ? 'bg-[oklch(0.13_0.02_250)]/90 backdrop-blur-xl border-b border-[oklch(0.30_0.03_250)] shadow-lg shadow-black/20'
+    76→          : 'bg-transparent'
+    77→      }`}
+    78→    >
+    79→      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    80→        <div className="flex items-center justify-between h-16 sm:h-20">
+    81→          {/* Logo */}
+    82→          <a href="#hero" className="flex items-center gap-3 group">
+    83→            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden glow-teal-sm transition-all duration-300 group-hover:scale-110">
+    84→              <img src="/logo.png" alt="اكسيس" className="w-full h-full object-contain" />
+    85→            </div>
+    86→            <div className="hidden sm:block">
+    87→              <span className="text-lg font-bold gradient-text">اكسيس</span>
+    88→              <span className="block text-[10px] text-[oklch(0.65_0.02_250)] tracking-wider">للحلول الهندسية المتقدمة</span>
+    89→            </div>
+    90→          </a>
+    91→
+    92→          {/* Desktop Links */}
+    93→          <div className="hidden md:flex items-center gap-1">
+    94→            {links.map(l => (
+    95→              <a
+    96→                key={l.href}
+    97→                href={l.href}
+    98→                className="px-4 py-2 text-sm text-[oklch(0.75_0.01_250)] hover:text-[oklch(0.72_0.14_180)] rounded-lg hover:bg-[oklch(0.72_0.14_180_/_0.08)] transition-all duration-300"
+    99→              >
+   100→                {l.label}
+   101→              </a>
+   102→            ))}
+   103→            <a
+   104→              href="#contact"
+   105→              className="mr-2 px-5 py-2.5 bg-[oklch(0.72_0.14_180)] text-[oklch(0.13_0.02_250)] text-sm font-semibold rounded-lg hover:bg-[oklch(0.75_0.15_180)] transition-all duration-300 glow-teal-sm"
+   106→            >
+   107→              احصل على عرض
+   108→            </a>
+   109→          </div>
+   110→
+   111→          {/* Mobile toggle */}
+   112→          <button
+   113→            onClick={() => setMobileOpen(!mobileOpen)}
+   114→            className="md:hidden p-2 text-[oklch(0.75_0.01_250)]"
+   115→            aria-label="القائمة"
+   116→          >
+   117→            {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+   118→          </button>
+   119→        </div>
+   120→      </div>
+   121→
+   122→      {/* Mobile menu */}
+   123→      <AnimatePresence>
+   124→        {mobileOpen && (
+   125→          <motion.div
+   126→            initial={{ opacity: 0, height: 0 }}
+   127→            animate={{ opacity: 1, height: 'auto' }}
+   128→            exit={{ opacity: 0, height: 0 }}
+   129→            className="md:hidden bg-[oklch(0.13_0.02_250)]/95 backdrop-blur-xl border-t border-[oklch(0.30_0.03_250)] overflow-hidden"
+   130→          >
+   131→            <div className="px-4 py-4 space-y-1">
+   132→              {links.map(l => (
+   133→                <a
+   134→                  key={l.href}
+   135→                  href={l.href}
+   136→                  onClick={() => setMobileOpen(false)}
+   137→                  className="block px-4 py-3 text-[oklch(0.75_0.01_250)] hover:text-[oklch(0.72_0.14_180)] rounded-lg hover:bg-[oklch(0.72_0.14_180_/_0.08)] transition-all"
+   138→                >
+   139→                  {l.label}
+   140→                </a>
+   141→              ))}
+   142→              <a
+   143→                href="#contact"
+   144→                onClick={() => setMobileOpen(false)}
+   145→                className="block mt-2 px-4 py-3 bg-[oklch(0.72_0.14_180)] text-[oklch(0.13_0.02_250)] text-center font-semibold rounded-lg"
+   146→              >
+   147→                احصل على عرض
+   148→              </a>
+   149→            </div>
+   150→          </motion.div>
+   151→        )}
+   152→      </AnimatePresence>
+   153→    </motion.nav>
+   154→  )
+   155→}
+   156→
+   157→/* ───────── hero ───────── */
+   158→function Hero() {
+   159→  return (
+   160→    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient">
+   161→      {/* Grid pattern overlay */}
+   162→      <div className="absolute inset-0 grid-pattern opacity-30" />
+   163→
+   164→      {/* Animated circles */}
+   165→      <div className="absolute top-1/4 right-1/4 w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-[oklch(0.72_0.14_180_/_0.06)] blur-3xl animate-float" />
+   166→      <div className="absolute bottom-1/4 left-1/4 w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-[oklch(0.65_0.16_200_/_0.05)] blur-3xl animate-float" style={{ animationDelay: '3s' }} />
+   167→
+   168→      {/* Content */}
+   169→      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+   170→        <motion.div
+   171→          initial={{ opacity: 0, scale: 0.8 }}
+   172→          animate={{ opacity: 1, scale: 1 }}
+   173→          transition={{ duration: 0.8, ease: 'easeOut' }}
+   174→          className="mb-8"
+   175→        >
+   176→          <div className="w-28 h-28 sm:w-36 sm:h-36 mx-auto rounded-2xl overflow-hidden glow-teal animate-pulse-glow">
+   177→            <img src="/logo.png" alt="شعار اكسيس" className="w-full h-full object-contain p-2" />
+   178→          </div>
+   179→        </motion.div>
+   180→
+   181→        <motion.h1
+   182→          initial={{ opacity: 0, y: 30 }}
+   183→          animate={{ opacity: 1, y: 0 }}
+   184→          transition={{ duration: 0.8, delay: 0.2 }}
+   185→          className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 leading-tight"
+   186→        >
+   187→          <span className="gradient-text">اكسيس</span>
+   188→          <br />
+   189→          <span className="text-[oklch(0.90_0.005_250)]">للحلول الهندسية المتقدمة</span>
+   190→        </motion.h1>
+   191→
+   192→        <motion.p
+   193→          initial={{ opacity: 0, y: 20 }}
+   194→          animate={{ opacity: 1, y: 0 }}
+   195→          transition={{ duration: 0.8, delay: 0.4 }}
+   196→          className="text-lg sm:text-xl text-[oklch(0.65_0.02_250)] max-w-2xl mx-auto mb-10 leading-relaxed"
+   197→        >
+   198→          الشركة الرائدة في فلسطين في مجال أجهزة المساحة والجيوماتكس. الوكيل الحصري لشركات Trimble و NavVis و Spectra.
+   199→          نقدم أحدث تقنيات GPS و RTK والمسح الضوئي وأنظمة مراقبة التحرك.
+   200→        </motion.p>
+   201→
+   202→        <motion.div
+   203→          initial={{ opacity: 0, y: 20 }}
+   204→          animate={{ opacity: 1, y: 0 }}
+   205→          transition={{ duration: 0.8, delay: 0.6 }}
+   206→          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+   207→        >
+   208→          <a
+   209→            href="#services"
+   210→            className="group px-8 py-4 bg-[oklch(0.72_0.14_180)] text-[oklch(0.13_0.02_250)] font-bold rounded-xl hover:bg-[oklch(0.75_0.15_180)] transition-all duration-300 glow-teal flex items-center gap-2"
+   211→          >
+   212→            اكتشف خدماتنا
+   213→            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+   214→          </a>
+   215→          <a
+   216→            href="#contact"
+   217→            className="px-8 py-4 border border-[oklch(0.72_0.14_180_/_0.3)] text-[oklch(0.72_0.14_180)] font-semibold rounded-xl hover:bg-[oklch(0.72_0.14_180_/_0.1)] hover:border-[oklch(0.72_0.14_180_/_0.6)] transition-all duration-300"
+   218→          >
+   219→            تواصل معنا
+   220→          </a>
+   221→        </motion.div>
+   222→
+   223→        {/* Scroll indicator */}
+   224→        <motion.div
+   225→          initial={{ opacity: 0 }}
+   226→          animate={{ opacity: 1 }}
+   227→          transition={{ delay: 1.5 }}
+   228→          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+   229→        >
+   230→          <motion.div
+   231→            animate={{ y: [0, 8, 0] }}
+   232→            transition={{ duration: 2, repeat: Infinity }}
+   233→          >
+   234→            <ChevronDown className="w-6 h-6 text-[oklch(0.50_0.02_250)]" />
+   235→          </motion.div>
+   236→        </motion.div>
+   237→      </div>
+   238→    </section>
+   239→  )
+   240→}
+   241→
+   242→/* ───────── about ───────── */
+   243→function About() {
+   244→  const features = [
+   245→    { icon: <Target className="w-6 h-6" />, title: 'رؤية واضحة', desc: 'نسعى لأن نكون الرواد في تقديم حلول المساحة والجيوماتكس المبتكرة في فلسطين والمنطقة' },
+   246→    { icon: <Shield className="w-6 h-6" />, title: 'وكيل حصري', desc: 'الوكيل الحصري لشركات Trimble و NavVis و Spectra العالمية في تقديم أحدث أجهزة المساحة والقياس' },
+   247→    { icon: <Zap className="w-6 h-6" />, title: 'تقنيات متقدمة', desc: 'نوظف أحدث تقنيات GPS و RTK والمسح الضوئي ثلاثي الأبعاد وأنظمة مراقبة التحرك' },
+   248→  ]
+   249→
+   250→  return (
+   251→    <Section id="about" className="py-20 sm:py-28">
+   252→      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   253→        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+   254→          {/* Text side */}
+   255→          <div>
+   256→            <span className="text-[oklch(0.72_0.14_180)] text-sm font-semibold tracking-wider uppercase">من نحن</span>
+   257→            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-3 mb-6 leading-tight">
+   258→              قيادة تقنيات المساحة <br />
+   259→              <span className="gradient-text">في فلسطين</span>
+   260→            </h2>
+   261→            <p className="text-[oklch(0.65_0.02_250)] text-lg leading-relaxed mb-8">
+   262→              شركة اكسيس للحلول الهندسية المتقدمة (AXIS GPS & Surveying Instruments LTD) هي الشركة الرائدة والأكبر
+   263→              في فلسطين في مجال أجهزة المساحة والقياس والمسح الجيوماتيكي. نحن الوكيل الحصري لشركات Trimble و NavVis و Spectra
+   264→              العالميتين، ونقدم أحدث التقنيات والحلول المتكاملة للمساحين والمهندسين.
+   265→            </p>
+   266→            <p className="text-[oklch(0.55_0.02_250)] leading-relaxed mb-8">
+   267→              منذ تأسيسها على يد المهندس سلامة عواودة، عملت اكسيس على توفير أحدث أجهزة GPS و RTK والماسحات الضوئية
+   268→              وأنظمة مراقبة التحرك، مع تقديم خدمات التدريب المتخصص والدعم الفني المستمر. تمتلك الشركة أربعة فروع
+   269→              رئيسية في كفر كنا وكفر قاسم ورام الله والخليل، وتتعاون مع مؤسسات عالمية مثل UNDP.
+   270→            </p>
+   271→            <div className="space-y-4">
+   272→              {features.map((f, i) => (
+   273→                <motion.div
+   274→                  key={i}
+   275→                  initial={{ opacity: 0, x: 30 }}
+   276→                  whileInView={{ opacity: 1, x: 0 }}
+   277→                  viewport={{ once: true }}
+   278→                  transition={{ delay: i * 0.15 }}
+   279→                  className="flex items-start gap-4 p-4 rounded-xl border border-[oklch(0.30_0.03_250)] bg-[oklch(0.17_0.02_250)] hover:border-[oklch(0.72_0.14_180_/_0.3)] transition-all duration-300"
+   280→                >
+   281→                  <div className="p-3 rounded-lg bg-[oklch(0.72_0.14_180_/_0.1)] text-[oklch(0.72_0.14_180)] shrink-0">
+   282→                    {f.icon}
+   283→                  </div>
+   284→                  <div>
+   285→                    <h3 className="font-semibold text-[oklch(0.90_0.005_250)] mb-1">{f.title}</h3>
+   286→                    <p className="text-sm text-[oklch(0.55_0.02_250)]">{f.desc}</p>
+   287→                  </div>
+   288→                </motion.div>
+   289→              ))}
+   290→            </div>
+   291→          </div>
+   292→
+   293→          {/* Visual side */}
+   294→          <div className="relative hidden lg:block">
+   295→            <div className="relative w-full aspect-square max-w-lg mx-auto">
+   296→              {/* Decorative circles */}
+   297→              <div className="absolute inset-8 rounded-full border border-[oklch(0.72_0.14_180_/_0.15)]" />
+   298→              <div className="absolute inset-16 rounded-full border border-[oklch(0.72_0.14_180_/_0.1)]" />
+   299→              <div className="absolute inset-24 rounded-full border border-dashed border-[oklch(0.72_0.14_180_/_0.08)]" />
+   300→
+   301→              {/* Center icon */}
+   302→              <div className="absolute inset-0 flex items-center justify-center">
+   303→                <div className="w-32 h-32 rounded-2xl bg-[oklch(0.72_0.14_180_/_0.1)] border border-[oklch(0.72_0.14_180_/_0.2)] flex items-center justify-center glow-teal-sm">
+   304→                  <DraftingCompass className="w-16 h-16 text-[oklch(0.72_0.14_180)]" />
+   305→                </div>
+   306→              </div>
+   307→
+   308→              {/* Floating items */}
+   309→              <motion.div
+   310→                animate={{ y: [-5, 5, -5] }}
+   311→                transition={{ duration: 4, repeat: Infinity }}
+   312→                className="absolute top-8 right-8 p-4 rounded-xl bg-[oklch(0.17_0.02_250)] border border-[oklch(0.30_0.03_250)] shadow-xl"
+   313→              >
+   314→                <Building2 className="w-8 h-8 text-[oklch(0.72_0.14_180)]" />
+   315→              </motion.div>
+   316→              <motion.div
+   317→                animate={{ y: [5, -5, 5] }}
+   318→                transition={{ duration: 4, repeat: Infinity }}
+   319→                className="absolute bottom-8 left-8 p-4 rounded-xl bg-[oklch(0.17_0.02_250)] border border-[oklch(0.30_0.03_250)] shadow-xl"
+   320→              >
+   321→                <HardHat className="w-8 h-8 text-[oklch(0.65_0.16_200)]" />
+   322→              </motion.div>
+   323→              <motion.div
+   324→                animate={{ y: [-3, 6, -3] }}
+   325→                transition={{ duration: 5, repeat: Infinity }}
+   326→                className="absolute top-1/2 left-0 -translate-y-1/2 p-4 rounded-xl bg-[oklch(0.17_0.02_250)] border border-[oklch(0.30_0.03_250)] shadow-xl"
+   327→              >
+   328→                <Ruler className="w-8 h-8 text-[oklch(0.80_0.10_160)]" />
+   329→              </motion.div>
+   330→              <motion.div
+   331→                animate={{ y: [3, -6, 3] }}
+   332→                transition={{ duration: 5, repeat: Infinity }}
+   333→                className="absolute top-1/2 right-0 -translate-y-1/2 p-4 rounded-xl bg-[oklch(0.17_0.02_250)] border border-[oklch(0.30_0.03_250)] shadow-xl"
+   334→              >
+   335→                <Compass className="w-8 h-8 text-[oklch(0.60_0.18_30)]" />
+   336→              </motion.div>
+   337→            </div>
+   338→          </div>
+   339→        </div>
+   340→      </div>
+   341→    </Section>
+   342→  )
+   343→}
+   344→
+   345→/* ───────── services ───────── */
+   346→function Services() {
+   347→  const services = [
+   348→    {
+   349→      icon: <Satellite className="w-7 h-7" />,
+   350→      title: 'أجهزة GPS و RTK',
+   351→      desc: 'توفير أحدث أجهزة GPS و RTK عالية الدقة للمسح الميداني والقياسات الجيوديسية مع دعم فني متكامل',
+   352→    },
+   353→    {
+   354→      icon: <DraftingCompass className="w-7 h-7" />,
+   355→      title: 'أجهزة التوتل ستيشن',
+   356→      desc: 'توريد أحدث أجهزة التوتل ستيشن من Trimble و Spectra لقياسات المساحة الدقيقة في المشاريع الهندسية',
+   357→    },
+   358→    {
+   359→      icon: <ScanLine className="w-7 h-7" />,
+   360→      title: 'المسح الضوئي ثلاثي الأبعاد',
+   361→      desc: 'ماسحات ضوئية متنقلة وثابتة ومحمولة جواً ومركبة للمسح ثلاثي الأبعاد الدقيق والنمذجة المتقدمة',
+   362→    },
+   363→    {
+   364→      icon: <Monitor className="w-7 h-7" />,
+   365→      title: 'أنظمة GIS والخرائط',
+   366→      desc: 'حلول نظم المعلومات الجغرافية والخرائط الرقمية المتكاملة لتحليل وإدارة البيانات المكانية',
+   367→    },
+   368→    {
+   369→      icon: <Radio className="w-7 h-7" />,
+   370→      title: 'أنظمة مراقبة التحرك',
+   371→      desc: 'أنظمة مراقبة تحرك متقدمة للمباني والمنشآت والمنحدرات باستخدام أحدث أجهزة القياس والإنذار المبكر',
+   372→    },
+   373→    {
+   374→      icon: <GraduationCap className="w-7 h-7" />,
+   375→      title: 'التدريب والدعم الفني',
+   376→      desc: 'برامج تدريبية متخصصة على أجهزة المساحة والقياس مع دعم فني مستمر وخدمة ما بعد البيع',
+   377→    },
+   378→  ]
+   379→
+   380→  return (
+   381→    <Section id="services" className="py-20 sm:py-28 relative">
+   382→      <div className="absolute inset-0 grid-pattern opacity-10" />
+   383→      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   384→        <div className="text-center mb-16">
+   385→          <span className="text-[oklch(0.72_0.14_180)] text-sm font-semibold tracking-wider uppercase">خدماتنا</span>
+   386→          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-3 mb-4">
+   387→            أجهزة وخدمات <span className="gradient-text">المساحة والجيوماتكس</span>
+   388→          </h2>
+   389→          <p className="text-[oklch(0.55_0.02_250)] max-w-2xl mx-auto">
+   390→            نقدم أحدث أجهزة المساحة والقياس من أبرز الشركات العالمية مع خدمات التدريب والدعم الفني المتكامل
+   391→          </p>
+   392→        </div>
+   393→
+   394→        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+   395→          {services.map((s, i) => (
+   396→            <motion.div
+   397→              key={i}
+   398→              initial={{ opacity: 0, y: 30 }}
+   399→              whileInView={{ opacity: 1, y: 0 }}
+   400→              viewport={{ once: true }}
+   401→              transition={{ delay: i * 0.1 }}
+   402→              className="group relative p-6 rounded-2xl border border-[oklch(0.30_0.03_250)] bg-[oklch(0.17_0.02_250)] hover:border-[oklch(0.72_0.14_180_/_0.4)] hover:bg-[oklch(0.19_0.02_250)] transition-all duration-500 cursor-pointer overflow-hidden"
+   403→            >
+   404→              {/* Hover glow */}
+   405→              <div className="absolute top-0 right-0 w-32 h-32 bg-[oklch(0.72_0.14_180_/_0.05)] rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+   406→
+   407→              <div className="relative">
+   408→                <div className="p-3 rounded-xl bg-[oklch(0.72_0.14_180_/_0.1)] text-[oklch(0.72_0.14_180)] w-fit mb-4 group-hover:scale-110 transition-transform duration-300">
+   409→                  {s.icon}
+   410→                </div>
+   411→                <h3 className="text-xl font-bold text-[oklch(0.90_0.005_250)] mb-3">{s.title}</h3>
+   412→                <p className="text-[oklch(0.55_0.02_250)] leading-relaxed text-sm">{s.desc}</p>
+   413→                <div className="mt-4 flex items-center gap-1 text-[oklch(0.72_0.14_180)] text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+   414→                  <span>المزيد</span>
+   415→                  <ArrowUpRight className="w-4 h-4" />
+   416→                </div>
+   417→              </div>
+   418→            </motion.div>
+   419→          ))}
+   420→        </div>
+   421→      </div>
+   422→    </Section>
+   423→  )
+   424→}
+   425→
+   426→/* ───────── stats ───────── */
+   427→function Stats() {
+   428→  const stats = [
+   429→    { value: 4, suffix: '', label: 'فروع في فلسطين', icon: <MapPin className="w-6 h-6" /> },
+   430→    { value: 500, suffix: '+', label: 'عميل راضٍ', icon: <Users className="w-6 h-6" /> },
+   431→    { value: 10, suffix: '+', label: 'سنوات خبرة', icon: <Wrench className="w-6 h-6" /> },
+   432→    { value: 3, suffix: '', label: 'وكالات حصرية عالمية', icon: <Star className="w-6 h-6" /> },
+   433→  ]
+   434→
+   435→  return (
+   436→    <Section id="stats" className="py-20 sm:py-28 relative overflow-hidden">
+   437→      {/* Background glow */}
+   438→      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[oklch(0.72_0.14_180_/_0.06)] rounded-full blur-3xl" />
+   439→
+   440→      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   441→        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+   442→          {stats.map((s, i) => (
+   443→            <motion.div
+   444→              key={i}
+   445→              initial={{ opacity: 0, scale: 0.8 }}
+   446→              whileInView={{ opacity: 1, scale: 1 }}
+   447→              viewport={{ once: true }}
+   448→              transition={{ delay: i * 0.15 }}
+   449→              className="relative p-6 sm:p-8 rounded-2xl border border-[oklch(0.30_0.03_250)] bg-[oklch(0.17_0.02_250)]/80 backdrop-blur text-center group hover:border-[oklch(0.72_0.14_180_/_0.3)] transition-all duration-300"
+   450→            >
+   451→              <div className="mb-4 flex justify-center">
+   452→                <div className="p-3 rounded-xl bg-[oklch(0.72_0.14_180_/_0.1)] text-[oklch(0.72_0.14_180)] group-hover:scale-110 transition-transform">
+   453→                  {s.icon}
+   454→                </div>
+   455→              </div>
+   456→              <div className="text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-2">
+   457→                <Counter end={s.value} suffix={s.suffix} />
+   458→              </div>
+   459→              <div className="text-[oklch(0.55_0.02_250)] text-sm">{s.label}</div>
+   460→            </motion.div>
+   461→          ))}
+   462→        </div>
+   463→      </div>
+   464→    </Section>
+   465→  )
+   466→}
+   467→
+   468→/* ───────── brands ───────── */
+   469→function Brands() {
+   470→  const brands = [
+   471→    {
+   472→      name: 'Trimble',
+   473→      desc: 'رائد عالمي في تقنيات المسح والبنية التحتية',
+   474→      color: 'from-[#0063B2] to-[#004E90]',
+   475→      specialties: ['GPS / GNSS', 'Total Station', 'أجهزة ليزر', 'برامج المسح'],
+   476→    },
+   477→    {
+   478→      name: 'NavVis',
+   479→      desc: 'قائد تقنيات المسح المتنقل والنمذجة ثلاثية الأبعاد',
+   480→      color: 'from-[#E31937] to-[#B8102A]',
+   481→      specialties: ['مسح متنقل', 'ماسحات داخلية', 'نمذجة 3D', 'خرائط رقمية'],
+   482→    },
+   483→    {
+   484→      name: 'Spectra',
+   485→      desc: 'حلول مسح عالية الدقة للمساحين والمقاولين',
+   486→      color: 'from-[#007A33] to-[#005C26]',
+   487→      specialties: ['RTK / GPS', 'توتل ستيشن', 'مستويات ليزر', 'جمع بيانات'],
+   488→    },
+   489→  ]
+   490→
+   491→  return (
+   492→    <Section id="brands" className="py-20 sm:py-28 relative">
+   493→      <div className="absolute inset-0 grid-pattern opacity-10" />
+   494→      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   495→        <div className="text-center mb-16">
+   496→          <span className="text-[oklch(0.72_0.14_180)] text-sm font-semibold tracking-wider uppercase">شراكاتنا</span>
+   497→          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-3 mb-4">
+   498→            علامات تجارية <span className="gradient-text">عالمية رائدة</span>
+   499→          </h2>
+   500→          <p className="text-[oklch(0.55_0.02_250)] max-w-2xl mx-auto">
+   501→            وكيل حصري في فلسطين لأبرز الشركات العالمية المتخصصة في أجهزة المساحة والجيوماتكس
+   502→          </p>
+   503→        </div>
+   504→
+   505→        <div className="grid md:grid-cols-3 gap-6">
+   506→          {brands.map((b, i) => (
+   507→            <motion.div
+   508→              key={i}
+   509→              initial={{ opacity: 0, y: 30 }}
+   510→              whileInView={{ opacity: 1, y: 0 }}
+   511→              viewport={{ once: true }}
+   512→              transition={{ delay: i * 0.15 }}
+   513→              className="group relative rounded-2xl border border-[oklch(0.30_0.03_250)] bg-[oklch(0.17_0.02_250)] overflow-hidden hover:border-[oklch(0.72_0.14_180_/_0.4)] transition-all duration-500"
+   514→            >
+   515→              {/* Brand header gradient */}
+   516→              <div className={`bg-gradient-to-l ${b.color} p-6 text-center`}>
+   517→                <h3 className="text-2xl sm:text-3xl font-bold text-white tracking-wide">{b.name}</h3>
+   518→                <p className="text-white/80 text-sm mt-2">{b.desc}</p>
+   519→              </div>
+   520→
+   521→              {/* Specialties */}
+   522→              <div className="p-6">
+   523→                <h4 className="text-[oklch(0.72_0.14_180)] font-semibold text-sm mb-3">التخصصات</h4>
+   524→                <div className="flex flex-wrap gap-2">
+   525→                  {b.specialties.map((s, j) => (
+   526→                    <span
+   527→                      key={j}
+   528→                      className="px-3 py-1.5 rounded-lg bg-[oklch(0.22_0.03_250)] text-[oklch(0.70_0.01_250)] text-xs border border-[oklch(0.30_0.03_250)] group-hover:border-[oklch(0.72_0.14_180_/_0.2)] transition-colors"
+   529→                    >
+   530→                      {s}
+   531→                    </span>
+   532→                  ))}
+   533→                </div>
+   534→                <div className="mt-4 flex items-center gap-1 text-[oklch(0.72_0.14_180)] text-sm font-medium">
+   535→                  <span>الوكيل الحصري في فلسطين</span>
+   536→                  <CheckCircle2 className="w-4 h-4" />
+   537→                </div>
+   538→              </div>
+   539→            </motion.div>
+   540→          ))}
+   541→        </div>
+   542→      </div>
+   543→    </Section>
+   544→  )
+   545→}
+   546→
+   547→/* ───────── projects ───────── */
+   548→function Projects() {
+   549→  const projects = [
+   550→    {
+   551→      title: 'مختبر GIS والمساحة - جامعة الخليل',
+   552→      category: 'التعليم الأكاديمي',
+   553→      desc: 'إنشاء مختبر نظم المعلومات الجغرافية والمساحة في كلية المهن والعلوم التطبيقية بجامعة الخليل بالتعاون مع AXIS-GPS',
+   554→      tags: ['GIS', 'أجهزة مساحة', 'جامعة الخليل'],
+   555→    },
+   556→    {
+   557→      title: 'دعم جامعة البوليتكنك فلسطين',
+   558→      category: 'المسؤولية المجتمعية',
+   559→      desc: 'تبرع بأجهزة مساحة حديثة ودعم صندوق الطالب الكريم لصالح جامعة البوليتكنك فلسطين لتعزيز التخصصات الهندسية',
+   560→      tags: ['تبرع', 'أجهزة مساحة', 'البوليتكنك'],
+   561→    },
+   562→    {
+   563→      title: 'الشراكة مع UNDP',
+   564→      category: 'مشاريع دولية',
+   565→      desc: 'التعاون مع برنامج الأمم المتحدة الإنمائي في مشاريع المسح والخرائط ونظم المعلومات الجغرافية في فلسطين',
+   566→      tags: ['UNDP', 'GIS', 'خرائط رقمية'],
+   567→    },
+   568→    {
+   569→      title: 'افتتاح فرع الخليل',
+   570→      category: 'توسع الشركة',
+   571→      desc: 'افتتاح الفرع الرابع لشركة اكسيس في الخليل تحت رعاية أحمد سعيد بيوض التميمي لتوسيع نطاق الخدمات في المنطقة',
+   572→      tags: ['فرع جديد', 'الخليل', 'توسع'],
+   573→    },
+   574→  ]
+   575→
+   576→  return (
+   577→    <Section id="projects" className="py-20 sm:py-28">
+   578→      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   579→        <div className="text-center mb-16">
+   580→          <span className="text-[oklch(0.72_0.14_180)] text-sm font-semibold tracking-wider uppercase">مشاريعنا</span>
+   581→          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-3 mb-4">
+   582→            إنجازاتنا <span className="gradient-text">وشراكاتنا</span>
+   583→          </h2>
+   584→          <p className="text-[oklch(0.55_0.02_250)] max-w-2xl mx-auto">
+   585→            نفخر بشراكاتنا مع المؤسسات الأكاديمية والدولية ومساهمتنا في تطوير قطاع المساحة والجيوماتكس في فلسطين
+   586→          </p>
+   587→        </div>
+   588→
+   589→        <div className="grid sm:grid-cols-2 gap-6">
+   590→          {projects.map((p, i) => (
+   591→            <motion.div
+   592→              key={i}
+   593→              initial={{ opacity: 0, y: 30 }}
+   594→              whileInView={{ opacity: 1, y: 0 }}
+   595→              viewport={{ once: true }}
+   596→              transition={{ delay: i * 0.12 }}
+   597→              className="group relative p-6 sm:p-8 rounded-2xl border border-[oklch(0.30_0.03_250)] bg-[oklch(0.17_0.02_250)] hover:border-[oklch(0.72_0.14_180_/_0.4)] transition-all duration-500 overflow-hidden"
+   598→            >
+   599→              {/* Decorative corner accent */}
+   600→              <div className="absolute top-0 left-0 w-24 h-24 bg-[oklch(0.72_0.14_180_/_0.04)] rounded-br-full" />
+   601→
+   602→              <div className="relative">
+   603→                <span className="text-xs font-medium text-[oklch(0.72_0.14_180)] bg-[oklch(0.72_0.14_180_/_0.1)] px-3 py-1 rounded-full">
+   604→                  {p.category}
+   605→                </span>
+   606→                <h3 className="text-xl sm:text-2xl font-bold text-[oklch(0.90_0.005_250)] mt-4 mb-3">{p.title}</h3>
+   607→                <p className="text-[oklch(0.55_0.02_250)] leading-relaxed mb-4">{p.desc}</p>
+   608→                <div className="flex flex-wrap gap-2">
+   609→                  {p.tags.map((t, j) => (
+   610→                    <span key={j} className="text-xs px-3 py-1 rounded-full border border-[oklch(0.30_0.03_250)] text-[oklch(0.55_0.02_250)]">
+   611→                      {t}
+   612→                    </span>
+   613→                  ))}
+   614→                </div>
+   615→              </div>
+   616→            </motion.div>
+   617→          ))}
+   618→        </div>
+   619→      </div>
+   620→    </Section>
+   621→  )
+   622→}
+   623→
+   624→/* ───────── testimonials ───────── */
+   625→function Testimonials() {
+   626→  const testimonials = [
+   627→    {
+   628→      name: 'م. أنس أبو حديد',
+   629→      role: 'مدير فرع الخليل - شركة اكسيس',
+   630→      text: 'نلتزم في اكسيس بتقديم أحدث التقنيات وأفضل الخدمات لعملائنا في قطاع المساحة والجيوماتكس، ونسعى دائماً لتجاوز توقعاتهم.',
+   631→    },
+   632→    {
+   633→      name: 'م. سجى مسالمة',
+   634→      role: 'فريق اكسيس - فرع الخليل',
+   635→      text: 'فريق اكسيس يعمل بشغف لتوفير حلول مسح متكاملة تلبي احتياجات المشاريع المختلفة، من أجهزة GPS إلى أنظمة المراقبة المتقدمة.',
+   636→    },
+   637→    {
+   638→      name: 'أحمد سعيد بيوض التميمي',
+   639→      role: 'رئيس مجلس أمناء جامعة البوليتكنك',
+   640→      text: 'نشيد بدور شركة اكسيس في إرفاد قطاع المساحة والجيوماتكس بأحدث التقنيات الحديثة من خلال مبادراتها وخبراتها المهنية للمساحين والمهندسين.',
+   641→    },
+   642→  ]
+   643→
+   644→  return (
+   645→    <Section id="testimonials" className="py-20 sm:py-28 relative">
+   646→      <div className="absolute inset-0 grid-pattern opacity-10" />
+   647→      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   648→        <div className="text-center mb-16">
+   649→          <span className="text-[oklch(0.72_0.14_180)] text-sm font-semibold tracking-wider uppercase">آراء عملائنا</span>
+   650→          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-3 mb-4">
+   651→            ثقة <span className="gradient-text">عملائنا</span> هي شهادتنا
+   652→          </h2>
+   653→        </div>
+   654→
+   655→        <div className="grid md:grid-cols-3 gap-6">
+   656→          {testimonials.map((t, i) => (
+   657→            <motion.div
+   658→              key={i}
+   659→              initial={{ opacity: 0, y: 30 }}
+   660→              whileInView={{ opacity: 1, y: 0 }}
+   661→              viewport={{ once: true }}
+   662→              transition={{ delay: i * 0.15 }}
+   663→              className="p-6 rounded-2xl border border-[oklch(0.30_0.03_250)] bg-[oklch(0.17_0.02_250)] hover:border-[oklch(0.72_0.14_180_/_0.3)] transition-all duration-300"
+   664→            >
+   665→              <div className="flex gap-1 mb-4">
+   666→                {[...Array(5)].map((_, j) => (
+   667→                  <Star key={j} className="w-4 h-4 fill-[oklch(0.72_0.14_180)] text-[oklch(0.72_0.14_180)]" />
+   668→                ))}
+   669→              </div>
+   670→              <p className="text-[oklch(0.70_0.01_250)] leading-relaxed mb-6 text-sm">"{t.text}"</p>
+   671→              <div className="flex items-center gap-3">
+   672→                <div className="w-10 h-10 rounded-full bg-[oklch(0.72_0.14_180_/_0.15)] flex items-center justify-center text-[oklch(0.72_0.14_180)] font-bold text-sm">
+   673→                  {t.name.charAt(2)}
+   674→                </div>
+   675→                <div>
+   676→                  <div className="font-semibold text-[oklch(0.90_0.005_250)] text-sm">{t.name}</div>
+   677→                  <div className="text-[oklch(0.50_0.02_250)] text-xs">{t.role}</div>
+   678→                </div>
+   679→              </div>
+   680→            </motion.div>
+   681→          ))}
+   682→        </div>
+   683→      </div>
+   684→    </Section>
+   685→  )
+   686→}
+   687→
+   688→/* ───────── why us ───────── */
+   689→function WhyUs() {
+   690→  const reasons = [
+   691→    { icon: <CheckCircle2 className="w-5 h-5" />, text: 'الوكيل الحصري لشركات Trimble و NavVis و Spectra العالمية' },
+   692→    { icon: <CheckCircle2 className="w-5 h-5" />, text: 'أكثر من 10 سنوات من الخبرة في قطاع أجهزة المساحة' },
+   693→    { icon: <CheckCircle2 className="w-5 h-5" />, text: '4 فروع رئيسية تغطي مختلف مناطق فلسطين' },
+   694→    { icon: <CheckCircle2 className="w-5 h-5" />, text: 'شراكة مع برنامج الأمم المتحدة الإنمائي UNDP' },
+   695→    { icon: <CheckCircle2 className="w-5 h-5" />, text: 'تعاون مع جامعات فلسطينية (البوليتكنك، النجاح، الخليل)' },
+   696→    { icon: <CheckCircle2 className="w-5 h-5" />, text: 'دعم فني متواصل وخدمة ما بعد البيع' },
+   697→  ]
+   698→
+   699→  return (
+   700→    <Section id="why-us" className="py-20 sm:py-28 relative overflow-hidden">
+   701→      <div className="absolute top-0 left-0 w-96 h-96 bg-[oklch(0.72_0.14_180_/_0.04)] rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+   702→      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   703→        <div className="grid lg:grid-cols-2 gap-12 items-center">
+   704→          <div>
+   705→            <span className="text-[oklch(0.72_0.14_180)] text-sm font-semibold tracking-wider uppercase">لماذا اكسيس</span>
+   706→            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-3 mb-6 leading-tight">
+   707→              لماذا تختار <span className="gradient-text">اكسيس؟</span>
+   708→            </h2>
+   709→            <p className="text-[oklch(0.55_0.02_250)] leading-relaxed mb-8">
+   710→              نتميز بأننا الشركة الرائدة والأكبر في فلسطين في مجال أجهزة المساحة والجيوماتكس.
+   711→              وكالة حصرية لأكبر الشركات العالمية مع شبكة فروع واسعة وفريق متخصص يقدم أفضل الحلول والدعم لعملائنا.
+   712→            </p>
+   713→            <div className="grid sm:grid-cols-2 gap-4">
+   714→              {reasons.map((r, i) => (
+   715→                <motion.div
+   716→                  key={i}
+   717→                  initial={{ opacity: 0, x: 20 }}
+   718→                  whileInView={{ opacity: 1, x: 0 }}
+   719→                  viewport={{ once: true }}
+   720→                  transition={{ delay: i * 0.1 }}
+   721→                  className="flex items-start gap-3"
+   722→                >
+   723→                  <CheckCircle2 className="w-5 h-5 text-[oklch(0.72_0.14_180)] shrink-0 mt-0.5" />
+   724→                  <span className="text-[oklch(0.70_0.01_250)] text-sm">{r.text}</span>
+   725→                </motion.div>
+   726→              ))}
+   727→            </div>
+   728→          </div>
+   729→
+   730→          {/* Decorative visual */}
+   731→          <div className="hidden lg:flex items-center justify-center">
+   732→            <div className="relative w-80 h-80">
+   733→              <div className="absolute inset-0 rounded-full border-2 border-dashed border-[oklch(0.72_0.14_180_/_0.2)] animate-spin" style={{ animationDuration: '30s' }} />
+   734→              <div className="absolute inset-8 rounded-full border border-[oklch(0.72_0.14_180_/_0.1)]" />
+   735→              <div className="absolute inset-0 flex items-center justify-center">
+   736→                <div className="text-center">
+   737→                  <div className="w-24 h-24 mx-auto rounded-xl overflow-hidden glow-teal mb-4">
+   738→                    <img src="/logo.png" alt="اكسيس" className="w-full h-full object-contain p-1" />
+   739→                  </div>
+   740→                  <div className="text-[oklch(0.72_0.14_180)] font-bold text-lg">اكسيس</div>
+   741→                  <div className="text-[oklch(0.50_0.02_250)] text-xs">حلول هندسية متقدمة</div>
+   742→                </div>
+   743→              </div>
+   744→            </div>
+   745→          </div>
+   746→        </div>
+   747→      </div>
+   748→    </Section>
+   749→  )
+   750→}
+   751→
+   752→/* ───────── contact ───────── */
+   753→function Contact() {
+   754→  const [submitted, setSubmitted] = useState(false)
+   755→
+   756→  const handleSubmit = (e: React.FormEvent) => {
+   757→    e.preventDefault()
+   758→    setSubmitted(true)
+   759→    setTimeout(() => setSubmitted(false), 4000)
+   760→  }
+   761→
+   762→  const contactInfo = [
+   763→    { icon: <Phone className="w-5 h-5" />, label: 'اتصل بنا', value: '0594224497' },
+   764→    { icon: <Phone className="w-5 h-5" />, label: 'اتصل بنا', value: '0595289999' },
+   765→    { icon: <Mail className="w-5 h-5" />, label: 'البريد الإلكتروني', value: 'adnan@axis-gps.com' },
+   766→    { icon: <Mail className="w-5 h-5" />, label: 'البريد الإلكتروني', value: 'salama@axis-gps.com' },
+   767→    { icon: <MapPin className="w-5 h-5" />, label: 'الفرع الرئيسي', value: 'كفر كنا المنطقة الصناعية' },
+   768→    { icon: <MapPin className="w-5 h-5" />, label: 'فرع الشمال', value: 'كفر قاسم الشارع الرئيسي' },
+   769→    { icon: <MapPin className="w-5 h-5" />, label: 'فرع رام الله', value: 'شارع الإرسال قرب السفينة' },
+   770→    { icon: <MapPin className="w-5 h-5" />, label: 'فرع الخليل', value: 'شارع عين سارة مقابل ملعب الحسين بن علي' },
+   771→  ]
+   772→
+   773→  return (
+   774→    <Section id="contact" className="py-20 sm:py-28 relative">
+   775→      <div className="absolute inset-0 grid-pattern opacity-10" />
+   776→      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+   777→        <div className="text-center mb-16">
+   778→          <span className="text-[oklch(0.72_0.14_180)] text-sm font-semibold tracking-wider uppercase">تواصل معنا</span>
+   779→          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-3 mb-4">
+   780→            لنبدأ <span className="gradient-text">مشروعك القادم</span>
+   781→          </h2>
+   782→          <p className="text-[oklch(0.55_0.02_250)] max-w-2xl mx-auto">
+   783→            تواصل معنا اليوم لمناقشة متطلبات مشروعك والحصول على استشارة مجانية من خبرائنا
+   784→          </p>
+   785→        </div>
+   786→
+   787→        <div className="grid lg:grid-cols-5 gap-8">
+   788→          {/* Contact info */}
+   789→          <div className="lg:col-span-2 space-y-6">
+   790→            {contactInfo.map((c, i) => (
+   791→              <motion.div
+   792→                key={i}
+   793→                initial={{ opacity: 0, x: 20 }}
+   794→                whileInView={{ opacity: 1, x: 0 }}
+   795→                viewport={{ once: true }}
+   796→                transition={{ delay: i * 0.1 }}
+   797→                className="flex items-start gap-4 p-5 rounded-xl border border-[oklch(0.30_0.03_250)] bg-[oklch(0.17_0.02_250)] hover:border-[oklch(0.72_0.14_180_/_0.3)] transition-all"
+   798→              >
+   799→                <div className="p-3 rounded-lg bg-[oklch(0.72_0.14_180_/_0.1)] text-[oklch(0.72_0.14_180)] shrink-0">
+   800→                  {c.icon}
+   801→                </div>
+   802→                <div>
+   803→                  <div className="text-sm text-[oklch(0.50_0.02_250)]">{c.label}</div>
+   804→                  <div className="text-[oklch(0.90_0.005_250)] font-medium mt-1" dir="ltr">{c.value}</div>
+   805→                </div>
+   806→              </motion.div>
+   807→            ))}
+   808→
+   809→            {/* Branches map */}
+   810→            <div className="rounded-xl border border-[oklch(0.30_0.03_250)] bg-[oklch(0.17_0.02_250)] overflow-hidden p-5 relative">
+   811→              <div className="absolute inset-0 grid-pattern opacity-20" />
+   812→              <div className="relative space-y-3">
+   813→                <h4 className="text-[oklch(0.72_0.14_180)] font-semibold text-sm mb-3">فروعنا</h4>
+   814→                <div className="flex items-start gap-2">
+   815→                  <MapPin className="w-4 h-4 text-[oklch(0.72_0.14_180)] mt-0.5 shrink-0" />
+   816→                  <div>
+   817→                    <span className="text-[oklch(0.80_0.005_250)] text-sm font-medium">الفرع الرئيسي</span>
+   818→                    <p className="text-[oklch(0.50_0.02_250)] text-xs">كفر كنا المنطقة الصناعية</p>
+   819→                  </div>
+   820→                </div>
+   821→                <div className="flex items-start gap-2">
+   822→                  <MapPin className="w-4 h-4 text-[oklch(0.65_0.16_200)] mt-0.5 shrink-0" />
+   823→                  <div>
+   824→                    <span className="text-[oklch(0.80_0.005_250)] text-sm font-medium">فرع الشمال</span>
+   825→                    <p className="text-[oklch(0.50_0.02_250)] text-xs">كفر قاسم الشارع الرئيسي</p>
+   826→                  </div>
+   827→                </div>
+   828→                <div className="flex items-start gap-2">
+   829→                  <MapPin className="w-4 h-4 text-[oklch(0.80_0.10_160)] mt-0.5 shrink-0" />
+   830→                  <div>
+   831→                    <span className="text-[oklch(0.80_0.005_250)] text-sm font-medium">فرع رام الله</span>
+   832→                    <p className="text-[oklch(0.50_0.02_250)] text-xs">شارع الإرسال قرب السفينة</p>
+   833→                  </div>
+   834→                </div>
+   835→                <div className="flex items-start gap-2">
+   836→                  <MapPin className="w-4 h-4 text-[oklch(0.60_0.18_30)] mt-0.5 shrink-0" />
+   837→                  <div>
+   838→                    <span className="text-[oklch(0.80_0.005_250)] text-sm font-medium">فرع الخليل</span>
+   839→                    <p className="text-[oklch(0.50_0.02_250)] text-xs">شارع عين سارة مقابل ملعب الحسين بن علي</p>
+   840→                  </div>
+   841→                </div>
+   842→              </div>
+   843→            </div>
+   844→          </div>
+   845→
+   846→          {/* Form */}
+   847→          <motion.form
+   848→            initial={{ opacity: 0, y: 20 }}
+   849→            whileInView={{ opacity: 1, y: 0 }}
+   850→            viewport={{ once: true }}
+   851→            onSubmit={handleSubmit}
+   852→            className="lg:col-span-3 p-6 sm:p-8 rounded-2xl border border-[oklch(0.30_0.03_250)] bg-[oklch(0.17_0.02_250)]"
+   853→          >
+   854→            <div className="grid sm:grid-cols-2 gap-4 mb-4">
+   855→              <div>
+   856→                <label className="block text-sm text-[oklch(0.60_0.01_250)] mb-2">الاسم الكامل</label>
+   857→                <input
+   858→                  type="text"
+   859→                  placeholder="أدخل اسمك"
+   860→                  className="w-full px-4 py-3 rounded-xl bg-[oklch(0.22_0.03_250)] border border-[oklch(0.30_0.03_250)] text-[oklch(0.90_0.005_250)] placeholder:text-[oklch(0.40_0.02_250)] focus:border-[oklch(0.72_0.14_180)] focus:outline-none transition-colors"
+   861→                />
+   862→              </div>
+   863→              <div>
+   864→                <label className="block text-sm text-[oklch(0.60_0.01_250)] mb-2">البريد الإلكتروني</label>
+   865→                <input
+   866→                  type="email"
+   867→                  placeholder="example@email.com"
+   868→                  dir="ltr"
+   869→                  className="w-full px-4 py-3 rounded-xl bg-[oklch(0.22_0.03_250)] border border-[oklch(0.30_0.03_250)] text-[oklch(0.90_0.005_250)] placeholder:text-[oklch(0.40_0.02_250)] focus:border-[oklch(0.72_0.14_180)] focus:outline-none transition-colors"
+   870→                />
+   871→              </div>
+   872→            </div>
+   873→            <div className="mb-4">
+   874→              <label className="block text-sm text-[oklch(0.60_0.01_250)] mb-2">رقم الهاتف</label>
+   875→              <input
+   876→                type="tel"
+   877→                placeholder="+966 XX XXX XXXX"
+   878→                dir="ltr"
+   879→                className="w-full px-4 py-3 rounded-xl bg-[oklch(0.22_0.03_250)] border border-[oklch(0.30_0.03_250)] text-[oklch(0.90_0.005_250)] placeholder:text-[oklch(0.40_0.02_250)] focus:border-[oklch(0.72_0.14_180)] focus:outline-none transition-colors"
+   880→              />
+   881→            </div>
+   882→            <div className="mb-4">
+   883→              <label className="block text-sm text-[oklch(0.60_0.01_250)] mb-2">نوع الخدمة</label>
+   884→              <select className="w-full px-4 py-3 rounded-xl bg-[oklch(0.22_0.03_250)] border border-[oklch(0.30_0.03_250)] text-[oklch(0.90_0.005_250)] focus:border-[oklch(0.72_0.14_180)] focus:outline-none transition-colors appearance-none">
+   885→                <option value="">اختر الخدمة المطلوبة</option>
+   886→                <option value="gps">أجهزة GPS و RTK</option>
+   887→                <option value="total-station">أجهزة التوتل ستيشن</option>
+   888→                <option value="scanning">المسح الضوئي ثلاثي الأبعاد</option>
+   889→                <option value="gis">أنظمة GIS والخرائط</option>
+   890→                <option value="monitoring">أنظمة مراقبة التحرك</option>
+   891→                <option value="training">التدريب والدعم الفني</option>
+   892→              </select>
+   893→            </div>
+   894→            <div className="mb-6">
+   895→              <label className="block text-sm text-[oklch(0.60_0.01_250)] mb-2">تفاصيل المشروع</label>
+   896→              <textarea
+   897→                rows={4}
+   898→                placeholder="اكتب تفاصيل مشروعك هنا..."
+   899→                className="w-full px-4 py-3 rounded-xl bg-[oklch(0.22_0.03_250)] border border-[oklch(0.30_0.03_250)] text-[oklch(0.90_0.005_250)] placeholder:text-[oklch(0.40_0.02_250)] focus:border-[oklch(0.72_0.14_180)] focus:outline-none transition-colors resize-none"
+   900→              />
+   901→            </div>
+   902→
+   903→            <AnimatePresence mode="wait">
+   904→              {submitted ? (
+   905→                <motion.div
+   906→                  initial={{ opacity: 0, scale: 0.9 }}
+   907→                  animate={{ opacity: 1, scale: 1 }}
+   908→                  exit={{ opacity: 0 }}
+   909→                  className="flex items-center justify-center gap-2 py-3 text-[oklch(0.72_0.14_180)] font-semibold"
+   910→                >
+   911→                  <CheckCircle2 className="w-5 h-5" />
+   912→                  تم إرسال رسالتك بنجاح!
+   913→                </motion.div>
+   914→              ) : (
+   915→                <motion.button
+   916→                  initial={{ opacity: 1 }}
+   917→                  exit={{ opacity: 0 }}
+   918→                  type="submit"
+   919→                  className="w-full flex items-center justify-center gap-2 py-4 bg-[oklch(0.72_0.14_180)] text-[oklch(0.13_0.02_250)] font-bold rounded-xl hover:bg-[oklch(0.75_0.15_180)] transition-all duration-300 glow-teal-sm"
+   920→                >
+   921→                  <Send className="w-5 h-5" />
+   922→                  إرسال الرسالة
+   923→                </motion.button>
+   924→              )}
+   925→            </AnimatePresence>
+   926→          </motion.form>
+   927→        </div>
+   928→      </div>
+   929→    </Section>
+   930→  )
+   931→}
+   932→
+   933→/* ───────── footer ───────── */
+   934→function Footer() {
+   935→  return (
+   936→    <footer className="border-t border-[oklch(0.30_0.03_250)] bg-[oklch(0.11_0.02_250)]">
+   937→      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+   938→        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+   939→          {/* Brand */}
+   940→          <div className="sm:col-span-2 lg:col-span-1">
+   941→            <div className="flex items-center gap-3 mb-4">
+   942→              <div className="w-10 h-10 rounded-lg overflow-hidden">
+   943→                <img src="/logo.png" alt="اكسيس" className="w-full h-full object-contain" />
+   944→              </div>
+   945→              <div>
+   946→                <span className="font-bold gradient-text">اكسيس</span>
+   947→                <span className="block text-[10px] text-[oklch(0.50_0.02_250)]">للحلول الهندسية المتقدمة</span>
+   948→              </div>
+   949→            </div>
+   950→            <p className="text-[oklch(0.50_0.02_250)] text-sm leading-relaxed">
+   951→              شريكك الموثوق لأجهزة المساحة والجيوماتكس - الوكيل الحصري لشركات Trimble و NavVis و Spectra
+   952→            </p>
+   953→          </div>
+   954→
+   955→          {/* Quick links */}
+   956→          <div>
+   957→            <h4 className="text-[oklch(0.90_0.005_250)] font-semibold mb-4">روابط سريعة</h4>
+   958→            <div className="space-y-2">
+   959→              {['الرئيسية', 'من نحن', 'خدماتنا', 'مشاريعنا', 'تواصل معنا'].map((l, i) => (
+   960→                <a key={i} href={`#${['hero', 'about', 'services', 'projects', 'contact'][i]}`} className="block text-[oklch(0.50_0.02_250)] hover:text-[oklch(0.72_0.14_180)] text-sm transition-colors">
+   961→                  {l}
+   962→                </a>
+   963→              ))}
+   964→            </div>
+   965→          </div>
+   966→
+   967→          {/* Services */}
+   968→          <div>
+   969→            <h4 className="text-[oklch(0.90_0.005_250)] font-semibold mb-4">خدماتنا</h4>
+   970→            <div className="space-y-2">
+   971→              {['أجهزة GPS و RTK', 'أجهزة التوتل ستيشن', 'المسح الضوئي 3D', 'أنظمة GIS والخرائط', 'أنظمة مراقبة التحرك'].map((s, i) => (
+   972→                <span key={i} className="block text-[oklch(0.50_0.02_250)] text-sm">{s}</span>
+   973→              ))}
+   974→            </div>
+   975→          </div>
+   976→
+   977→          {/* Contact */}
+   978→          <div>
+   979→            <h4 className="text-[oklch(0.90_0.005_250)] font-semibold mb-4">تواصل معنا</h4>
+   980→            <div className="space-y-3">
+   981→              <div className="flex items-center gap-2 text-[oklch(0.50_0.02_250)] text-sm">
+   982→                <Phone className="w-4 h-4 text-[oklch(0.72_0.14_180)]" />
+   983→                <span dir="ltr">0594224497</span>
+   984→              </div>
+   985→              <div className="flex items-center gap-2 text-[oklch(0.50_0.02_250)] text-sm">
+   986→                <Phone className="w-4 h-4 text-[oklch(0.72_0.14_180)]" />
+   987→                <span dir="ltr">0595289999</span>
+   988→              </div>
+   989→              <div className="flex items-center gap-2 text-[oklch(0.50_0.02_250)] text-sm">
+   990→                <Mail className="w-4 h-4 text-[oklch(0.72_0.14_180)]" />
+   991→                <span dir="ltr">adnan@axis-gps.com</span>
+   992→              </div>
+   993→              <div className="flex items-center gap-2 text-[oklch(0.50_0.02_250)] text-sm">
+   994→                <Mail className="w-4 h-4 text-[oklch(0.72_0.14_180)]" />
+   995→                <span dir="ltr">salama@axis-gps.com</span>
+   996→              </div>
+   997→              <div className="flex items-start gap-2 text-[oklch(0.50_0.02_250)] text-sm">
+   998→                <MapPin className="w-4 h-4 text-[oklch(0.72_0.14_180)] mt-0.5 shrink-0" />
+   999→                <div>
+  1000→                  <p>الفرع الرئيسي: كفر كنا المنطقة الصناعية</p>
+  1001→                  <p>فرع الشمال: كفر قاسم الشارع الرئيسي</p>
+  1002→                  <p>فرع رام الله: شارع الإرسال قرب السفينة</p>
+  1003→                  <p>فرع الخليل: شارع عين سارة مقابل ملعب الحسين بن علي</p>
+  1004→                </div>
+  1005→              </div>
+  1006→            </div>
+  1007→          </div>
+  1008→        </div>
+  1009→
+  1010→        <div className="mt-10 pt-8 border-t border-[oklch(0.30_0.03_250)] flex flex-col sm:flex-row items-center justify-between gap-4">
+  1011→          <p className="text-[oklch(0.40_0.02_250)] text-sm">
+  1012→            جميع الحقوق محفوظة &copy; {new Date().getFullYear()} اكسيس للحلول الهندسية المتقدمة
+  1013→          </p>
+  1014→          <div className="flex items-center gap-4">
+  1015→            <a href="#" className="text-[oklch(0.40_0.02_250)] hover:text-[oklch(0.72_0.14_180)] text-xs transition-colors">سياسة الخصوصية</a>
+  1016→            <a href="#" className="text-[oklch(0.40_0.02_250)] hover:text-[oklch(0.72_0.14_180)] text-xs transition-colors">الشروط والأحكام</a>
+  1017→          </div>
+  1018→        </div>
+  1019→      </div>
+  1020→    </footer>
+  1021→  )
+  1022→}
+  1023→
+  1024→/* ───────── main page ───────── */
+  1025→export default function Home() {
+  1026→  return (
+  1027→    <div className="min-h-screen flex flex-col">
+  1028→      <Navbar />
+  1029→      <main className="flex-1">
+  1030→        <Hero />
+  1031→        <About />
+  1032→        <Stats />
+  1033→        <Brands />
+  1034→        <Services />
+  1035→        <Projects />
+  1036→        <WhyUs />
+  1037→        <Testimonials />
+  1038→        <Contact />
+  1039→      </main>
+  1040→      <Footer />
+  1041→    </div>
+  1042→  )
+  1043→}
+  1044→

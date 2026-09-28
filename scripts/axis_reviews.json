@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://www.trimble.com/en/solutions/technologies/positioning",
+    "name": "Positioning Technology from Trimble: About GNSS & GPS",
+    "snippet": "Our easy-to-use GNSS correction services take the complexity and cost out of high-accuracy positioning. With Trimble, you get global coverage with the local ...",
+    "host_name": "www.trimble.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=dOX4PM3ENIc",
+    "name": "The evolution of Trimble GNSS systems - YouTube",
+    "snippet": "From the 4000 series to dedicated marine receivers, the Beacon-on-a-Belt (the BoB!) and into our modern-day systems, here's a walk through ...",
+    "host_name": "www.youtube.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.facebook.com/TrimbleSurvey/videos/come-follow-along-as-we-go-make-some-maps-with-the-trimble-handheld-gps-device-e/725571685226130",
+    "name": "Come follow along as we go make some maps with the #Trimble",
+    "snippet": "Come follow along as we go make some maps with the #Trimble handheld GPS device! #esri #arcgis.",
+    "host_name": "www.facebook.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://geomaticslandsurveying.com/trimble-gps-systems-solutions",
+    "name": "Trimble GPS Systems: Solutions for Surveyors' Needs",
+    "snippet": "Trimble GPS systems for surveying are of the highest quality and something you can rely on. When it comes to surveying, having precise and highly accurate data ...",
+    "host_name": "geomaticslandsurveying.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://geospatial.trimble.com/en/other/correction-services",
+    "name": "Correction Services - Trimble Geospatial",
+    "snippet": "Trimble RTX is the ideal choice for GNSS corrections on projects that span large geographic or remote areas, when you need to change locations frequently, or ...",
+    "host_name": "geospatial.trimble.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=BMJ8NvLfoig",
+    "name": "Trimble Siteworks Positioning System for Construction Surveyors",
+    "snippet": "The Trimble Siteworks Positioning System for Construction Surveyors is comprised of the Trimble R780 GNSS Smart Antenna, the TSC7 Controller ...",
+    "host_name": "www.youtube.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://geospatial.trimble.com/blog/geospatial/en-US/article/gps-101-learn-how-gps-works",
+    "name": "GPS 101: How GPS works - Trimble Geospatial",
+    "snippet": "Explore the basics of GNSS, including how receivers calculate their position, the various sources of error that can affect GNSS accuracy and ...",
+    "host_name": "geospatial.trimble.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://amerisurv.com/2021/06/20/are-satellite-based-correction-services-the-next-utility",
+    "name": "Are Satellite-Based Correction Services the “Next Utility”?",
+    "snippet": "The consultants utilized Trimble MGIS/resource-grade backpack mounted receivers and antennas with a handheld data collector. I was told that ...",
+    "host_name": "amerisurv.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://rosap.ntl.bts.gov/view/dot/34724/dot_34724_DS1.pdf",
+    "name": "[PDF] Trimble Use Case Information - ROSA P",
+    "snippet": "Using precision GPS guidance on the harvester, this grower can plant crops in rows 30 inches apart compared to 37 inches without precision GPS.",
+    "host_name": "rosap.ntl.bts.gov",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.geonovus.lt/sites/default/files/brosiura.pdf",
+    "name": "[PDF] TRIMBLE GNSS SURVEYING SYSTEMS - GeoNovus",
+    "snippet": "The Trimble R10 and Trimble R8s integrated GNSS systems combine the GNSS receiver, antenna, radio-modem, and battery into a single integrated, compact unit.",
+    "host_name": "www.geonovus.lt",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]
