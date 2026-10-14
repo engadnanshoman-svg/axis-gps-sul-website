@@ -1,0 +1,29 @@
+{
+  "name": "اكسيس للحلول الهندسية المتقدمة - AXIS GPS",
+  "short_name": "اكسيس AXIS",
+  "description": "الوكيل الحصري لشركات Trimble و NavVis و Spectra و Applanix و Kaarta - أحدث أجهزة GPS و RTK والمسح الضوئي ثلاثي الأبعاد",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B1120",
+  "theme_color": "#0B1120",
+  "dir": "rtl",
+  "lang": "ar",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "technology"],
+  "screenshots": [],
+  "prefer_related_applications": false
+}
